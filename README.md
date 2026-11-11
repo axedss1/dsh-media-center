@@ -4,35 +4,38 @@
 
 **自带渲染**：插件自己铺背景视频、播启动动画、把界面表面压成半透明，**不依赖任何第三方渲染插件**。
 
-**自带皮肤**：本仓库打包了 **2 套皮肤**（`blue-fantasy`、`whale-fantasy`，含各自的插画/循环视频与预览图），放在 `skins/`，安装后首次加载会自动装到 `$DSH_HOME/skins/`，装好就能切换。
-
-**视频素材不在仓库里**：启动动画和雨夜房间背景体积太大（约 113 MB），改放在本仓库的 **Releases** 附件（`dsh-media-center-1.0.8-full.zip`）。要现成素材的话：下载 Release 包解压，把 `media/` 放进 `$DSH_HOME/media-center/`，或用设置里的「从插件包导入素材」。不放也能用——启动动画和视频背景的卡片会少一些，皮肤照常。
+**内置资源（本包为自包含全资源版）**：5 段启动动画（8 / 10.6 / 5 / 50.8 / 38.7 MB）与 1 段背景（雨夜房间 10.2 MB）放在包内 `media/`，`sources.json` 用**相对路径**引用；另外把 **2 套皮肤**（`blue-fantasy`、`whale-fantasy`）整个放在包内 `skins/`。**装好即用，不用另外准备素材。**
 
 ---
 
 ## 安装
 
+> 本包是**自包含目录**（代码 + 皮肤 + 素材），整个目录放好就能装，不需要解压或重新打包。
+
 ### 方式一：DSH 设置界面（最简单）
 
-设置 → 内置插件 → 添加插件 → 输入 `github:axedss1/dsh-media-center` → 重启 DSH。
+1. 把 `dsh-media-center-1.0.7-bundle` 整个目录放到喜欢的位置（路径尽量别带中文/空格）。
+2. 设置 → 内置插件 → 添加插件 → 选择这个目录。
+3. 重启 DSH。
 
-### 方式二：命令行
+首次加载时插件会把包内 `skins/blue-fantasy`、`skins/whale-fantasy` 复制到 `$DSH_HOME/skins/`（**已存在则跳过**，不覆盖你改过的皮肤）。
 
-```sh
-dsh plugin --profile desktop add github:axedss1/dsh-media-center
+### 方式二：一行命令（复制粘贴即可）
+
+```powershell
+dsh plugin --profile desktop add "link:C:\path\to\dsh-media-center-1.0.7-bundle"
 ```
 
-也可以用本地目录：`dsh plugin --profile desktop add "link:C:\path\to\dsh-media-center"`。
+把路径换成实际目录，profile 名按自己的来（本机是 `desktop`）。装完**重启一次 DSH**。
 
-### 方式三：npm（发布后）
+### 方式三：Git / npm（发布后）
 
 ```sh
-dsh plugin --profile desktop add dsh-media-center
+dsh plugin --profile web add github:you/dsh-media-center
+dsh plugin --profile web add dsh-media-center
 ```
 
 装完**重启一次 DSH**（宿主侧代码与客户端模块都在启动时加载），设置左侧会出现「媒体中心」。
-
-> 国内直连 GitHub 不稳时，先给安装环境配好代理（`HTTPS_PROXY`），否则拉取会超时。
 
 ---
 
@@ -182,8 +185,6 @@ node tools/test-config-branches.mjs
 
 ## 更新记录
 
-- **1.0.8** — 分发结构调整：仓库只保留「代码 + 2 套皮肤」（约 7.4 MB），视频素材（5 段启动动画 + 雨夜房间，约 113 MB）移到 Releases 附件；`package.json` 补 `repository` / `homepage`。功能与 1.0.7 一致。
-- **1.0.7** — 支持「自带皮肤的整包」：插件加载时若包内有 `skins/`，就把里面的皮肤复制到 `$DSH_HOME/skins/`（已存在则跳过，不覆盖用户改动）。
 - **1.0.6** — 修「背景视频冻在第一帧」：背景层补上皮肤契约属性 `data-dsh-skin-layer="background"`（鲸鱼娘靠它把运行时视频层从负 z-index 抬到 1，合成器才会持续接管），视频元素再加 `translateZ(0)` + `will-change: transform`；新增播放看门狗（暂停即重播、连续两次 `currentTime` 不动就重挂 `src`）；设置面板新增一行「运行时」自检（皮肤 / CSS / 背景层 / 视频状态）。
 - **1.0.5** — 修「切换一次背景再切回来，HUD 消失」：皮肤样式改用 @scope ... to ([role=dialog], [aria-modal=true]) 把设置弹层整棵子树排除，**删掉 link.disabled 开关逻辑**（弹层关闭后节点常驻、祖先 opacity:0 等会让人肉可见性判断误判，皮肤样式一旦被禁用就再也不恢复）。现在弹层开/关、皮肤切换次数都不影响 HUD。
 - **1.0.4** — 修「设置里点了皮肤、HUD 却没换」：设置弹层关闭后往往只是隐藏、节点还在 DOM 里，`settingsOpen()` 误判成「还开着」，皮肤样式被一直 disabled。改成只在弹层**可见**时禁用（`display/visibility/opacity/aria-hidden` 都看），并加 1 秒兜底轮询；另外背景层存在时给 `html/body` 打 `data-dsh-backdrop-active`（皮肤约定的标记，皮肤地面层会让路）。

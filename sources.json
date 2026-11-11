@@ -1,0 +1,12 @@
+{
+  "boot": [
+    { "id": "alice-1", "label": "Alice-Marx · 启动 1", "file": "media/boot-alice-1.mp4" },
+    { "id": "alice-2", "label": "Alice-Marx · 启动 2", "file": "media/boot-alice-2.mp4" },
+    { "id": "alice-3", "label": "Alice-Marx · 启动 3", "file": "media/boot-alice-3.mp4" },
+    { "id": "alice-4", "label": "Alice-Marx · 启动 4（2K）", "file": "media/boot-alice-4.mp4" },
+    { "id": "lxj-5", "label": "lxj5820 · 启动 5", "file": "media/boot-lxj-5.mp4" }
+  ],
+  "background": [
+    { "id": "vs-bg", "label": "雨夜房间", "file": "media/bg-rainy-room.mp4" }
+  ]
+}
