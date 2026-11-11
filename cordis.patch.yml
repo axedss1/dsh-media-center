@@ -1,0 +1,8 @@
+# dsh-media-center bundle layer: one row, hosted by the profile's patch list.
+# The plugin renders the boot animation / background / skin itself - no
+# dsh-video-skin dependency. Host half exposes /dsh-media-center/*, client half
+# registers the "Media Center" settings section.
+
+- insert:
+    - id: media-center
+      name: dsh-media-center

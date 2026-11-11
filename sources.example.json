@@ -1,0 +1,16 @@
+{
+  "boot": [
+    {
+      "id": "my-boot",
+      "label": "我的启动动画",
+      "file": "D:\\videos\\boot.mp4"
+    }
+  ],
+  "background": [
+    {
+      "id": "my-bg",
+      "label": "我的界面背景",
+      "file": "D:\\videos\\bg.mp4"
+    }
+  ]
+}

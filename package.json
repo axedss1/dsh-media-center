@@ -1,0 +1,59 @@
+{
+  "name": "dsh-media-center",
+  "version": "1.0.8",
+  "description": "DSH 媒体中心：启动动画 + 界面背景（皮肤并入背景卡），自带 2 套皮肤；视频素材见 Releases",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/axedss1/dsh-media-center.git"
+  },
+  "homepage": "https://github.com/axedss1/dsh-media-center#readme",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "scoper.js",
+    "skins.js",
+    "importer.js",
+    "client",
+    "skins",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "sources.example.json",
+    "tools"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek",
+    "deepseek-harness",
+    "skin",
+    "theme",
+    "boot-animation",
+    "background"
+  ],
+  "dsh": {
+    "engines": {
+      "dsh": ">=0.2.2-rc.1"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ]
+    }
+  }
+}

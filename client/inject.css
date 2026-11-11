@@ -1,0 +1,160 @@
+/*
+ * dsh-media-center 注入样式：背景层 + 启动动画覆盖层 + 界面表面半透明化。
+ *
+ * 半透明化的做法与 dsh-video-skin 相同（该思路来自其 MIT 源码）：
+ * 内核主题把色板定义在 body / body[data-ds-dark-theme] 上，全应用的可视表面
+ * 都引用 --dsw-alias-* 别名，所以覆盖别名就能一次改到所有面板，不用知道任何
+ * 组件类名。只压「画布」和「侧栏」，抬起来的表面（弹层/菜单/设置页）保持不透明。
+ */
+
+html[data-mc="on"] body {
+  /* 皮肤 CSS 可能直接给 body / #root 画不透明底色；背景层在 z-index:-1，
+     不把这些底色让开的话视频永远看不见。 */
+  background-color: transparent !important;
+}
+
+html[data-mc="on"] #root {
+  background-color: transparent !important;
+}
+
+html[data-mc="on"] body {
+  --dsw-alias-bg-base: rgba(255, 255, 255, var(--mc-surface-l, 0.6)) !important;
+  --dsw-specific-sidebar-fill: rgba(249, 250, 251, var(--mc-sidebar-l, 0.66)) !important;
+}
+
+html[data-mc="on"] body[data-ds-dark-theme] {
+  --dsw-alias-bg-base: rgba(21, 21, 23, var(--mc-surface, 0.2)) !important;
+  --dsw-specific-sidebar-fill: rgba(27, 27, 28, var(--mc-sidebar, 0.26)) !important;
+}
+
+/* 背景层：z-index:-1 落在所有在流内容之下，不挡交互，也不需要改别的元素。 */
+#mc-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: #0e1116;
+}
+
+body:not([data-ds-dark-theme]) #mc-backdrop {
+  background: #eef1f5;
+}
+
+#mc-backdrop-video,
+#mc-backdrop-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: transparent;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+#mc-backdrop-video[data-shown="1"],
+#mc-backdrop-image[data-shown="1"] {
+  opacity: 1;
+}
+
+#mc-backdrop-veil {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, calc(var(--mc-veil-l, 0.1)));
+}
+
+body[data-ds-dark-theme] #mc-backdrop-veil {
+  background: rgba(0, 0, 0, var(--mc-veil, 0.14));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #mc-backdrop-video {
+    display: none;
+  }
+}
+
+/* ── 启动动画覆盖层 ── */
+#mc-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 44%, #0d1a2b 0%, #070b12 62%, #04060a 100%);
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 800ms cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#mc-boot[data-leaving="1"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#mc-boot-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 700ms ease;
+  background: transparent;
+}
+
+#mc-boot-video[data-shown="1"] {
+  opacity: 1;
+}
+
+#mc-boot-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 92% 86% at 50% 50%, transparent 58%, rgba(3, 7, 13, 0.55) 100%);
+}
+
+#mc-boot-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 26px;
+  text-align: center;
+  color: #dfe8f5;
+  font: 13px/1.6 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+#mc-boot[data-leaving="1"] #mc-boot-hint {
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+/* 自动播放被浏览器策略拦下时的「手动开声音」按钮 */
+#mc-boot-sound {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(10, 16, 28, 0.66);
+  color: #e8f1ff;
+  font: 500 12px/1 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: background-color 150ms ease;
+}
+
+#mc-boot-sound:hover {
+  background: rgba(20, 30, 48, 0.82);
+}
+
+#mc-boot-sound:focus-visible {
+  outline: 2px solid #3a7bff;
+  outline-offset: 2px;
+}
